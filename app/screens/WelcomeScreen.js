@@ -8,126 +8,144 @@ import {
   TextInput,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Alert
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-
-const WelcomeScreen = ({navigation}) => {
+const WelcomeScreen = ({ navigation }) => {
   const [eid, setEid] = useState("");
   const [pass, setPass] = useState("");
   const [token, setToken] = useState(null);
-  
+
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('token')
-        if(value !== null) {
+        const value = await AsyncStorage.getItem("token");
+        if (value !== null) {
           setToken(value);
         }
-      } catch(e) {
+      } catch (e) {
         setToken(null);
       }
-    }
+    };
 
     getData();
-  }, [token])
+  }, [token]);
 
-  const Login = () => async() => {
-    console.log(eid, pass);
-    if(eid === "" || pass === ""){return;}
+  //Alert Function
+  const showAlert = (title, msg) =>
+    Alert.alert(
+      title,
+      msg,
+      [
+        {
+          text: "Cancel",
+          onPress: () => Alert.alert("Cancel Pressed"),
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            "This alert was dismissed by tapping outside of the alert dialog."
+          ),
+      }
+    );
 
-    if(token === null){
-      return navigation.navigate('Register');
+    //Login Function
+  const Login = () => {
+    if (eid === "" || pass === "") {
+      return showAlert("Error", "Please fill the required fields below");
     }
-    fetch('https://cryptic-anchorage-12485.herokuapp.com/signin', {
-      method: 'POST',
+
+    fetch("https://cryptic-anchorage-12485.herokuapp.com/signin", {
+      method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "email": eid,
-        "password": pass
+        email: eid,
+        password: pass,
       }),
-    }).then(response => response.json())
-    .then(result => {
-      console.log(result);
-      try {
-        AsyncStorage.setItem('token', result.token);
-        navigation.navigate('Home')
-      } catch (e) {
-        console.log(e);
-      }
     })
-    .catch(error => console.log(error));
-  }
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+
+        if ('error' in result) {
+          return showAlert("Error", result.error);
+        }
+
+        try {
+          AsyncStorage.setItem("token", result.token);
+          navigation.navigate("Home");
+        } catch (e) {
+          console.log(e);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
   return (
     <View style={styles.welcome}>
-
       {/* Background Image*/}
       <ImageBackground
         style={styles.bgimage}
-        source={require('../assets/background1.jpg')}
-      />
+        source={require("../assets/background1.jpg")}
+      >
+        {/* Whole Container outside image background*/}
+        <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
+          {/* Logo*/}
+          <Image
+            source={require("../assets/logo-red.png")}
+            style={styles.logoImage}
+          />
+          {/* Logo text */}
+          <Text style={styles.tagLine}>Sell What you don't need{"\n\n"}</Text>
 
-      {/* Whole Container outside image background*/}
-      <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
+          {/* Input field for eid*/}
+          <TextInput
+            style={styles.input}
+            value={eid}
+            placeholder="example@domain.com"
+            keyboardType="email-address"
+            onChangeText={(text) => setEid(text)}
+          />
 
-        {/* Logo*/}
-        <Image
-          source={require("../assets/logo-red.png")}
-          style={styles.logoImage}
-        />
-        {/* Logo text */}
-        <Text style={styles.tagLine}>Sell What you don't need{"\n\n"}</Text>
+          <Text>{"\n"}</Text>
 
-        {/* Input field for eid*/}
-        <TextInput
-          style={styles.input}
-          value={eid}
-          placeholder="example@domain.com"
-          keyboardType="email-address"
-          onChangeText={text => setEid(text)}
-        />
+          {/* Password input */}
+          <TextInput
+            style={styles.input}
+            secureTextEntry={true}
+            value={pass}
+            placeholder="password"
+            keyboardType="default"
+            onChangeText={(text) => setPass(text)}
+          />
 
-        <Text>{"\n"}</Text>
+          <Text>{"\n"}</Text>
 
-        {/* Password input */}
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          value={pass}
-          placeholder="password"
-          keyboardType="default"
-          onChangeText={text => setPass(text)}
-        />
+          {/* Login button */}
+          <TouchableOpacity style={styles.loginButton} onPress={() => Login()}>
+            <KeyboardAvoidingView style={styles.login}>
+              <Text style={styles.loginText}>Login</Text>
+            </KeyboardAvoidingView>
+          </TouchableOpacity>
 
-        <Text>{"\n"}</Text>
+          <Text>{"\n"}</Text>
 
-        {/* Login button */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => Login()}
-        >
-          <KeyboardAvoidingView style={styles.login}>
-            <Text style={styles.loginText}>Login</Text>
-          </KeyboardAvoidingView>
-        </TouchableOpacity>
-
-        <Text>{"\n"}</Text>
-
-        {/* Register button */}
-        <TouchableOpacity
-          style={styles.registerButton}
-          onPress={() => navigation.navigate('Register')}
-        >
-          <KeyboardAvoidingView style={styles.register}>
-            <Text style={styles.registerText}>Register</Text>
-          </KeyboardAvoidingView>
-        </TouchableOpacity>
-
-        
-      </KeyboardAvoidingView>
+          {/* Register button */}
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => navigation.navigate("Register")}
+          >
+            <KeyboardAvoidingView style={styles.register}>
+              <Text style={styles.registerText}>Register</Text>
+            </KeyboardAvoidingView>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </ImageBackground>
     </View>
   );
 };
@@ -163,15 +181,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoContainer: {
-    position: "absolute",
-    top: 100,
+    flex: 1,
+    position: "relative",
     alignItems: "center",
-    left: 50,
+    justifyContent: "center",
   },
   logoImage: {
     width: 100,
     height: 100,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   tagLine: {
     color: "#4ecdc4",

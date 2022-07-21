@@ -3,17 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({navigation}) {
 
-    const storeData = async (value) => {
-        try {
-          await AsyncStorage.setItem('token', value)
-        } catch (e) {
-          console.log(e);
-        }
-      }
 
-    const LogOut = () => {
+    const LogOut = async() => {
 
-        storeData(null);
+        await AsyncStorage.removeItem('token');
         navigation.navigate('Login')
     }
     return (

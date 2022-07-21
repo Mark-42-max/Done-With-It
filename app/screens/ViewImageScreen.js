@@ -17,6 +17,26 @@ function ViewImageScreen({navigation}) {
   const [eid, setEid] = useState("");
   const [pass, setPass] = useState("");
 
+  const showAlert = (title, msg) =>
+  Alert.alert(
+    title,
+    msg,
+    [
+      {
+        text: "Cancel",
+        onPress: () => Alert.alert("Cancel Pressed"),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+      onDismiss: () =>
+        Alert.alert(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        ),
+    }
+  );
+
   const Register = async() => {
     console.log(eid, pass);
     if(eid === "" || pass === ""){return;}
@@ -32,6 +52,11 @@ function ViewImageScreen({navigation}) {
     }).then(response => response.json())
     .then(result => {
       console.log(result);
+
+      if(result.status === 402){
+        return showAlert("Error", result.error);
+      }
+
       try {
         AsyncStorage.setItem('token', result.token);
       } catch (e) {

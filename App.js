@@ -32,23 +32,22 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {isLoggedIn === null ? 
       <Stack.Navigator initialRouteName="Login">
+      {isLoggedIn === null ? 
+      
         <Stack.Screen name="Loading" component={LoadScreen} />
-      </Stack.Navigator> 
+      
       
       : isLoggedIn ? 
       
-      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-      </Stack.Navigator>
-      
       :
-      
-      <Stack.Navigator initialRouteName="Login">
+      <>
         <Stack.Screen name="Login" component={WelcomeScreen} />
         <Stack.Screen name="Register" component={ViewImageScreen} />
-      </Stack.Navigator>}
+      </>
+      }
+      </Stack.Navigator>
       
     </NavigationContainer>
 
