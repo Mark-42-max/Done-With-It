@@ -45,6 +45,7 @@ export default function App() {
       <>
         <Stack.Screen name="Login" component={WelcomeScreen} />
         <Stack.Screen name="Register" component={ViewImageScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
       </>
       }
       </Stack.Navigator>

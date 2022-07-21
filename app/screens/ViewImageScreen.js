@@ -7,6 +7,7 @@ import {
     TextInput,
     KeyboardAvoidingView,
     TouchableOpacity,
+    Alert
   } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -53,7 +54,7 @@ function ViewImageScreen({navigation}) {
     .then(result => {
       console.log(result);
 
-      if(result.status === 402){
+      if('error' in result){
         return showAlert("Error", result.error);
       }
 
