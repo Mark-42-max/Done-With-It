@@ -59,6 +59,7 @@ function ViewImageScreen({navigation}) {
       }
 
       try {
+        AsyncStorage.getItem('token').then(result => console.log(result)).catch(err => console.log(err))
         AsyncStorage.setItem('token', result.token);
       } catch (e) {
         console.log(e);

@@ -7,6 +7,9 @@ function HomeScreen({navigation}) {
     const LogOut = async() => {
 
         await AsyncStorage.removeItem('token');
+        AsyncStorage.getItem('token').then(result => {
+            console.log(result);
+        }).catch(err => {console.log(err)});
         navigation.navigate('Login')
     }
     return (
